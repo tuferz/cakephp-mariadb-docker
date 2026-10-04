@@ -1,0 +1,41 @@
+services:
+  # SERVICIO 1: Servidor Web Apache con PHP 8.3 y CakePHP
+  app:
+    build: .
+    container_name: cakephp_app
+    ports:
+      - "8765:80"             # Puerto 8765 en la máquina física -> Puerto 80 del contenedor
+    volumes:
+      - ./app:/var/www/html   # Sincronización bidireccional de código en tiempo real
+    environment:
+      - DEBUG=true
+    depends_on:
+      - db                    # Garantiza que MariaDB inicie antes que la app web
+    networks:
+      - red-laboratorio
+
+  # SERVICIO 2: Motor de Base de Datos Relacional MariaDB 11
+  db:
+    image: mariadb:11.4
+    container_name: mariadb_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: secret_root_pass
+      MYSQL_DATABASE: cake_db
+      MYSQL_USER: cake_user
+      MYSQL_PASSWORD: cake_password
+    ports:
+      - "3306:3306"           # Puerto 3306 expuesto para clientes externos (DBeaver/VS Code)
+    volumes:
+      - db_data:/var/lib/mysql # Volumen administrado: los datos persisten al apagar contenedores
+    networks:
+      - red-laboratorio
+
+# DEFINICIÓN DE VOLÚMENES PERSISTENTES
+volumes:
+  db_data:
+
+# DEFINICIÓN DE RED PRIVADA VIRTUAL
+networks:
+  red-laboratorio:
+    driver: bridge

@@ -1,0 +1,10 @@
+# CakePHP
+app/vendor/
+app/tmp/
+app/logs/
+
+# OS & Editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
